@@ -16,9 +16,9 @@ It is required to make next steps to start using ImageCLF:
 
 0. Clone or download an app repository
 1. Go into the folder where the app is cloned/downloaded
-2. Build a docker image by running the command -> `docker build . -t ImageCLF`
+2. Build a docker image by running the command -> `docker build . -t image_clf`
 3. Do something useful while the build is running
-4. After build is finished start a container to serve solution by running the command -> `docker run -p <your port for example 5000 or any free port on your system>:5000 -it --name image_clf_container ImageCLF`
+4. After build is finished start a container to serve solution by running the command -> `docker run -p <your port for example 5000 or any free port on your system>:5000 -it --name image_clf_container image_clf`
 5. In opened container terminal run command -> `start_services`
 6. Go to `localhost:<your port for example 5000 or any free port on your system>` in your browser
 7. Enjoy usage
