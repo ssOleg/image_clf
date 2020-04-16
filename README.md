@@ -23,3 +23,27 @@ It is required to make next steps to start using ImageCLF:
 6. Go to `localhost:<your port for example 5000 or any free port on your system>` in your browser
 7. Enjoy usage
 
+
+## Configuring deployment pipeline
+
+Use spin to create an app in Spinnaker.
+```
+spin application save --application-name test \
+                      --owner-email example@example.com \
+                      --cloud-providers kubernetes \
+                      --gate-endpoint <your-gate-endpoint>
+```
+Run the following commands to upload an example pipeline to your Spinnaker instance
+```
+PROPERTIES_FILE="~/image_clf/properties"
+source "$PROPERTIES_FILE"
+
+sed -i s/PROJECT/$PROJECT/g sample.yaml
+sed -i s/PROJECT/$PROJECT/g cloudbuild.yaml
+sed s/PROJECT/$PROJECT/g pipeline.json > pipeline-final.json
+sed s/SECRET/$SECRET/g pipeline.json > pipeline-final.json
+
+spin pipeline save --gate-endpoint <your-gate-endpoint> -f pipeline-final.json
+```
+
+

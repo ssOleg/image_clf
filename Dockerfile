@@ -35,7 +35,12 @@ RUN echo "alias stop_services='cd /app/ && make stop_services'" >> ~/.bashrc
 
 RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -
 RUN apt-get install -y nodejs
-RUN apt install -y npm
 RUN npm install
 
 RUN chmod +x /app/start.sh
+RUN chmod 777 /app/start.sh
+RUN sed -i -e 's/\r$//' /app/start.sh
+
+EXPOSE 5000
+
+ENTRYPOINT /app/start.sh; cd /app && python3 app.py
