@@ -171,7 +171,6 @@ class Upload extends React.Component {
     const data = new FormData();
     data.append("file", image);
     data.append("filename", image.name);
-    console.log(image);
     axios
       .post(`http://localhost:5000/api/predictions`, data, config)
       .then((res) => {
