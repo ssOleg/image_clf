@@ -7,7 +7,7 @@
         "name": "cloudbuild.yaml",
         "reference": "https://api.github.com/repos/ssOleg/image_clf/contents/cloudbuild.yaml",
         "type": "github/file",
-        "version": "feature/deployment"
+        "version": "develop"
       },
       "displayName": "breezy-earwig-73",
       "id": "1c87eaad-4a09-454a-a9f6-da6499a65361",
@@ -21,6 +21,7 @@
       "usePriorArtifact": false
     }
   ],
+  "isNew": true,
   "keepWaitingPipelines": false,
   "lastModifiedBy": "anonymous",
   "limitConcurrent": true,
@@ -50,7 +51,12 @@
                     "name": "image-clf-pod",
                     "ports": [
                       {
-                        "containerPort": 5000
+                        "containerPort": 5000,
+                        "name": "containerport1"
+                      },
+                      {
+                        "containerPort": 9000,
+                        "name": "containerport2"
                       }
                     ]
                   }
@@ -73,9 +79,16 @@
           "spec": {
             "ports": [
               {
+                "name": "containerport1",
                 "port": 80,
                 "protocol": "TCP",
                 "targetPort": 5000
+              },
+              {
+                "name": "containerport2",
+                "port": 9000,
+                "protocol": "TCP",
+                "targetPort": 9000
               }
             ],
             "selector": {
@@ -107,7 +120,7 @@
       "application": "test2",
       "buildDefinition": {
         "images": [
-          "gcr.io/$PROJECT_ID/image-clf"
+          "gcr.io/PROJECT/image-clf"
         ],
         "steps": [
           {
@@ -121,7 +134,7 @@
             "args": [
               "build",
               "-t",
-              "gcr.io/$PROJECT_ID/image-clf",
+              "gcr.io/PROJECT/image-clf",
               "."
             ],
             "name": "gcr.io/cloud-builders/docker"
@@ -130,19 +143,18 @@
             "args": [
               "run",
               "-d",
-              "gcr.io/$PROJECT_ID/image-clf"
+              "gcr.io/PROJECT/image-clf"
             ],
             "name": "gcr.io/cloud-builders/docker"
           },
           {
             "args": [
               "push",
-              "gcr.io/$PROJECT_ID/image-clf"
+              "gcr.io/PROJECT/image-clf"
             ],
             "name": "gcr.io/cloud-builders/docker"
           }
-        ],
-        "timeout": "1200s"
+        ]
       },
       "buildDefinitionSource": "text",
       "completeOtherBranchesThenFail": false,
@@ -178,7 +190,12 @@
                     "name": "image-clf-pod",
                     "ports": [
                       {
-                        "containerPort": 5000
+                        "containerPort": 5000,
+                        "name": "containerport1"
+                      },
+                      {
+                        "containerPort": 9000,
+                        "name": "containerport2"
                       }
                     ]
                   }
@@ -201,9 +218,16 @@
           "spec": {
             "ports": [
               {
+                "name": "containerport1",
                 "port": 80,
                 "protocol": "TCP",
                 "targetPort": 5000
+              },
+              {
+                "name": "containerport2",
+                "port": 9000,
+                "protocol": "TCP",
+                "targetPort": 9000
               }
             ],
             "selector": {
@@ -235,17 +259,17 @@
   ],
   "triggers": [
     {
-      "branch": "feature/deployment",
+      "branch": "develop",
       "enabled": true,
       "expectedArtifactIds": [
         "1c87eaad-4a09-454a-a9f6-da6499a65361"
       ],
-      "project": "Liliia",
+      "project": "User",
       "secret": "SECRET",
       "slug": "image_clf",
       "source": "github",
       "type": "git"
     }
   ],
-  "updateTs": "1588608762653"
+  "updateTs": "1589391129822"
 }

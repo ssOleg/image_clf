@@ -8,6 +8,9 @@ import ButtonBase from "@material-ui/core/ButtonBase";
 import Typography from "@material-ui/core/Typography";
 import axios from "../../axios";
 
+
+const host = window.location.host;
+
 const images = [
   {
     url: "/static/imgs/2.jpg",
@@ -172,7 +175,7 @@ class Upload extends React.Component {
     data.append("file", image);
     data.append("filename", image.name);
     axios
-      .post(`http://localhost:5000/api/predictions`, data, config)
+      .post(`http://${host}/api/predictions`, data, config)
       .then((res) => {
         this.setState({
           predictions: res.data,
@@ -192,7 +195,7 @@ class Upload extends React.Component {
       file: src,
     });
 
-    let response = await fetch("http://localhost:5000" + src);
+    let response = await fetch(`http://${host}` + src);
     let data = await response.blob();
     let metadata = {
       type: "image/jpeg",
