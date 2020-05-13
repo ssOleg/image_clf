@@ -2,7 +2,7 @@ import base64
 import json
 import requests
 
-from flask import Flask, flash, request, redirect, jsonify
+from flask import Flask, flash, request, redirect, jsonify, render_template
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
@@ -17,7 +17,13 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-@app.route('/', methods=['GET', 'POST'])
+
+@app.route('/')
+def main_page():
+    return render_template('index.html')
+
+
+@app.route('/api/predictions', methods=['GET', 'POST'])
 def upload_file():
     result_map = ['roses', 'sunflowers', 'daisy', 'dandelion', 'tulips']
     if request.method == 'POST':
@@ -42,8 +48,11 @@ def upload_file():
 
             result = r.content.decode('utf-8')
             if 'predictions' in result:
-                prediction = json.loads(result)['predictions'][0].index(max(json.loads(result)['predictions'][0]))
-                return jsonify(result_map[prediction])
+                results = [{'name': result_map[json.loads(result)['predictions'][0].index(prediction)], 'percentage':
+                           round(prediction * 100, 2)} for prediction in json.loads(result)['predictions'][0]
+                           if round(prediction * 100, 2) > 0]
+
+                return jsonify(sorted(results, key=lambda i: i['percentage'], reverse=True))
 
     return '''
     <!doctype html>

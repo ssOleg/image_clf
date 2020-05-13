@@ -1,0 +1,11 @@
+steps:
+- name: 'gcr.io/cloud-builders/git'
+  args: ['clone', 'https://github.com/ssOleg/image_clf.git']
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'gcr.io/$PROJECT_ID/image-clf', '.']
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['run', '-d',  'gcr.io/$PROJECT_ID/image-clf']
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'gcr.io/$PROJECT_ID/image-clf']
+images: ['gcr.io/$PROJECT_ID/image-clf']
+timeout: 1200s
