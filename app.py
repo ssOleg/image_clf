@@ -1,7 +1,7 @@
 import base64
 import json
 import requests
-
+from urllib.parse import urlparse
 from flask import Flask, flash, request, redirect, jsonify, render_template
 from werkzeug.utils import secure_filename
 
@@ -44,12 +44,13 @@ def upload_file():
                 "instances": [{'bytes_data': {"b64": base64.b64encode(input_image).decode("utf-8")}}]
             }
 
-            r = requests.post('http://localhost:9000/v1/models/ImageCLF:predict', json=payload)
+            h = urlparse(request.url)
+            r = requests.post('http://{}:9000/v1/models/ImageCLF:predict'.format(h.hostname), json=payload)
 
             result = r.content.decode('utf-8')
             if 'predictions' in result:
                 results = [{'name': result_map[json.loads(result)['predictions'][0].index(prediction)], 'percentage':
-                           round(prediction * 100, 2)} for prediction in json.loads(result)['predictions'][0]
+                    round(prediction * 100, 2)} for prediction in json.loads(result)['predictions'][0]
                            if round(prediction * 100, 2) > 0]
 
                 return jsonify(sorted(results, key=lambda i: i['percentage'], reverse=True))
