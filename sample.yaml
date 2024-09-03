@@ -1,0 +1,39 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: image-clf
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: image-clf
+    spec:
+      containers:
+        - image: 'gcr.io/$PROJECT_ID/image-clf:latest'
+          name: image-clf-pod
+          ports:
+            - containerPort: 5000
+              name: containerport1
+            - containerPort: 9000
+              name: containerport2
+      imagePullSecrets:
+        - name: regcred
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: image-clf-services
+spec:
+  ports:
+    - name: containerport1
+      port: 80
+      protocol: TCP
+      targetPort: 5000
+    - name: containerport2
+      port: 9000
+      protocol: TCP
+      targetPort: 9000
+  selector:
+    app: image-clf
+  type: LoadBalancer

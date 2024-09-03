@@ -1,0 +1,275 @@
+{
+  "expectedArtifacts": [
+    {
+      "defaultArtifact": {
+        "artifactAccount": "my-github-artifact-account",
+        "id": "f7153cc7-36dd-4b45-bb96-b417d2bb8f62",
+        "name": "cloudbuild.yaml",
+        "reference": "https://api.github.com/repos/ssOleg/image_clf/contents/cloudbuild.yaml",
+        "type": "github/file",
+        "version": "develop"
+      },
+      "displayName": "breezy-earwig-73",
+      "id": "1c87eaad-4a09-454a-a9f6-da6499a65361",
+      "matchArtifact": {
+        "artifactAccount": "my-github-artifact-account",
+        "id": "9fa42d09-462c-4e40-8513-3ef481e087ae",
+        "name": "cloudbuild.yaml",
+        "type": "github/file"
+      },
+      "useDefaultArtifact": true,
+      "usePriorArtifact": false
+    }
+  ],
+  "isNew": true,
+  "keepWaitingPipelines": false,
+  "lastModifiedBy": "anonymous",
+  "limitConcurrent": true,
+  "stages": [
+    {
+      "account": "spinnaker-account",
+      "cloudProvider": "kubernetes",
+      "manifests": [
+        {
+          "apiVersion": "extensions/v1beta1",
+          "kind": "Deployment",
+          "metadata": {
+            "name": "image-clf"
+          },
+          "spec": {
+            "replicas": 1,
+            "template": {
+              "metadata": {
+                "labels": {
+                  "app": "image-clf"
+                }
+              },
+              "spec": {
+                "containers": [
+                  {
+                    "image": "gcr.io/PROJECT/image-clf:latest",
+                    "name": "image-clf-pod",
+                    "ports": [
+                      {
+                        "containerPort": 5000,
+                        "name": "containerport1"
+                      },
+                      {
+                        "containerPort": 9000,
+                        "name": "containerport2"
+                      }
+                    ]
+                  }
+                ],
+                "imagePullSecrets": [
+                  {
+                    "name": "regcred"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "apiVersion": "v1",
+          "kind": "Service",
+          "metadata": {
+            "name": "image-clf-services"
+          },
+          "spec": {
+            "ports": [
+              {
+                "name": "containerport1",
+                "port": 80,
+                "protocol": "TCP",
+                "targetPort": 5000
+              },
+              {
+                "name": "containerport2",
+                "port": 9000,
+                "protocol": "TCP",
+                "targetPort": 9000
+              }
+            ],
+            "selector": {
+              "app": "image-clf"
+            },
+            "type": "LoadBalancer"
+          }
+        }
+      ],
+      "moniker": {
+        "app": "test2"
+      },
+      "name": "Deploy (Manifest)",
+      "refId": "1",
+      "requisiteStageRefIds": [],
+      "skipExpressionEvaluation": false,
+      "source": "text",
+      "trafficManagement": {
+        "enabled": false,
+        "options": {
+          "enableTraffic": false,
+          "services": []
+        }
+      },
+      "type": "deployManifest"
+    },
+    {
+      "account": "gcb-ci-account",
+      "application": "test2",
+      "buildDefinition": {
+        "images": [
+          "gcr.io/PROJECT/image-clf"
+        ],
+        "steps": [
+          {
+            "args": [
+              "clone",
+              "https://github.com/ssOleg/image_clf.git"
+            ],
+            "name": "gcr.io/cloud-builders/git"
+          },
+          {
+            "args": [
+              "build",
+              "-t",
+              "gcr.io/PROJECT/image-clf",
+              "."
+            ],
+            "name": "gcr.io/cloud-builders/docker"
+          },
+          {
+            "args": [
+              "run",
+              "-d",
+              "gcr.io/PROJECT/image-clf"
+            ],
+            "name": "gcr.io/cloud-builders/docker"
+          },
+          {
+            "args": [
+              "push",
+              "gcr.io/PROJECT/image-clf"
+            ],
+            "name": "gcr.io/cloud-builders/docker"
+          }
+        ]
+      },
+      "buildDefinitionSource": "text",
+      "completeOtherBranchesThenFail": false,
+      "continuePipeline": false,
+      "failPipeline": false,
+      "name": "Google Cloud Build",
+      "refId": "2",
+      "requisiteStageRefIds": [],
+      "type": "googleCloudBuild"
+    },
+    {
+      "account": "spinnaker-account",
+      "cloudProvider": "kubernetes",
+      "manifests": [
+        {
+          "apiVersion": "extensions/v1beta1",
+          "kind": "Deployment",
+          "metadata": {
+            "name": "image-clf"
+          },
+          "spec": {
+            "replicas": 1,
+            "template": {
+              "metadata": {
+                "labels": {
+                  "app": "image-clf"
+                }
+              },
+              "spec": {
+                "containers": [
+                  {
+                    "image": "gcr.io/PROJECT/image-clf:latest",
+                    "name": "image-clf-pod",
+                    "ports": [
+                      {
+                        "containerPort": 5000,
+                        "name": "containerport1"
+                      },
+                      {
+                        "containerPort": 9000,
+                        "name": "containerport2"
+                      }
+                    ]
+                  }
+                ],
+                "imagePullSecrets": [
+                  {
+                    "name": "regcred"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "apiVersion": "v1",
+          "kind": "Service",
+          "metadata": {
+            "name": "image-clf-services"
+          },
+          "spec": {
+            "ports": [
+              {
+                "name": "containerport1",
+                "port": 80,
+                "protocol": "TCP",
+                "targetPort": 5000
+              },
+              {
+                "name": "containerport2",
+                "port": 9000,
+                "protocol": "TCP",
+                "targetPort": 9000
+              }
+            ],
+            "selector": {
+              "app": "image-clf"
+            },
+            "type": "LoadBalancer"
+          }
+        }
+      ],
+      "moniker": {
+        "app": "test2"
+      },
+      "name": "Deploy (Manifest)",
+      "refId": "3",
+      "requisiteStageRefIds": [
+        "2"
+      ],
+      "skipExpressionEvaluation": false,
+      "source": "text",
+      "trafficManagement": {
+        "enabled": false,
+        "options": {
+          "enableTraffic": false,
+          "services": []
+        }
+      },
+      "type": "deployManifest"
+    }
+  ],
+  "triggers": [
+    {
+      "branch": "develop",
+      "enabled": true,
+      "expectedArtifactIds": [
+        "1c87eaad-4a09-454a-a9f6-da6499a65361"
+      ],
+      "project": "User",
+      "secret": "SECRET",
+      "slug": "image_clf",
+      "source": "github",
+      "type": "git"
+    }
+  ],
+  "updateTs": "1589391129822"
+}

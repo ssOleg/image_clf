@@ -1,0 +1,12 @@
+h5py
+Keras-Applications
+Keras-Preprocessing
+numpy
+Pillow
+ptpython
+requests
+tensorboard
+tensorflow
+tensorflow-estimator
+urllib3
+Flask
